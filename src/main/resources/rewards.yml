@@ -1,0 +1,244 @@
+# Define reward parameters here
+#
+########################### Keywords ###########################
+#   chance:                         Determine the chance for the reward to drop. Value should be 0.##-100. Note: If the plugin is in weight mode, this will be used as the weight.
+#   type:                           Specify the type of reward. 'item' or 'entity'
+#   xp:                             Specify the amount of XP that is dropped when the reward is reeled in.
+#   commands:                       Specify a list of commands ran by the server when the reward is reeled in.
+#       - 'say GREAT CATCH!'
+#   message:                        Specify a message that a player receives when a reward is reeled in.
+#   treasure:                       Specify if the reward chance is increased by Luck. True or False.
+#   junk:                           Specify if the reward chance is decreased by luck. True or false
+#
+########################### Item Keywords ###########################
+#   material:                       Specify the type of item using Minecraft IDs. Example: 'LEATHER'
+#   amount:                         Set the quantity of items dropped, either as a range (Min-Max) or exact amount.
+#   lore:                           Add a tooltip to the item. Each lore line should be a separate line in the list.
+#       - ''
+#   enchantments:                   Add enchantments to the item. Specify each enchantment with its ID, Levels, and chance separated by a colon ":". It's recommended to order the enchantments from lowest to highest chance, as they will be applied in the listed order.
+#       - 'protection:1-5:50'       Example: This means that protection level 1-5 has a 50% chance of being applied. Leaving the chance empty will guarantee an enchantment, any non-guaranteed enchantments will apply as a bonus enchantment.
+#   guaranteed-enchantment-amount:  Determines the number of guaranteed enchantments an item can have. For an example, if an item has 5 guaranteed enchantments, but the amount is set to 2, it will pick 2 enchantments randomly and apply them.
+#   bonus-enchantment-amount:       Determines the number of bonus enchants an item can have. This only applies to non-guaranteed enchantments.
+#   override-bonus-enchantments:    Allows more guaranteed enchantments to be applied if no bonus enchantments were applied. True/False
+#   durability:                     Set the durability of the item as a percentage, either as a range (Min-Max) or an exact value.
+#   unbreakable:                    Makes the item unbreakable. True/False
+#   consumed:                       Specify if the item should be consumed upon pickup. True or False.
+#   flags:                          Specify list of item flags to the reward
+#       - 'HIDE_ENCHANTS'
+#       - 'HIDE_ATTRIBUTES'
+#       - 'HIDE_UNBREAKABLE'
+#       - 'HIDE_DESTROYS'
+#       - 'HIDE_PLACED_ON'
+#       - 'HIDE_POTION_EFFECTS'
+#       - 'HIDE_DYE'
+#       - 'HIDE_ARMOR_TRIM'
+#   attributes:                     Specify the Minecraft attributes followed by a numerical value.
+#       health:                     generic.max_health
+#           value:                  Value of the attribute modifier
+#           operation:              How the value is being added. ADD_NUMBER/ADD_SCALER/MULTIPLY_SCALER_1 - Check Spigot Documentation for details.
+#           equipment-slot:         Specify the slot the attribute modifier should take effect in. HEAD/CHEST/LEGS/FEET/HAND/OFF_HAND - HAND is default.
+#       knockback-resistance:       generic.knockback_resistance
+#       speed:                      generic.movement_speed
+#       flying-speed:               generic.flying_speed
+#       damage:                     generic.attack_damage
+#       attack-speed:               generic.attack_speed
+#       armor:                      generic.armor
+#       armor-toughness:            generic.armor_toughness
+#       luck:                       generic.luck
+#       absorption:                 generic.max_absorption
+#
+########################### Entity Keywords ###########################
+#   entity-type:                    Specify the Minecraft entity type. Example: 'ZOMBIE'
+#   attributes:                     Specify the Minecraft entity attributes followed by a numerical value.
+#       health:                     generic.max_health
+#       follow-range:               generic.follow_range
+#       knockback-resistance:       generic.knockback_resistance
+#       speed:                      generic.movement_speed
+#       flying-speed:               generic.flying_speed
+#       damage:                     generic.attack_damage
+#       attack-speed:               generic.attack_speed
+#       armor:                      generic.armor
+#       armor-toughness:            generic.armor_toughness
+#       luck:                       generic.luck
+#       absorption:                 generic.max_absorption
+#       horse-jump:                 horse.jump_strength
+#       zombie-rienforcement:       zombie.spawn_rienforcements
+#   drops:                          Items that are dropped when the entity is killed.
+#       NAME:
+#           material:               Specify the Minecraft ID of the item.
+#           amount:                 Specify the amount of the dropped item, either as a range(Min-Max) or as an exact value.
+#           chance:                 Specify the chance of the item dropping.
+#    equipment:                     Sets the entity's worn equipment.
+#       HEAD:
+#           material:
+#           enchantments:
+#               - ''
+#           drops:                  Adds the worn equipment to the drops list.
+#               damaged:            Randomizes the durability of the drop. True or False.
+#               chance:             Specify the percentage of the item dropping as a number.
+#       CHEST:
+#       LEGS:
+#       FEET:
+#       HAND:
+#       OFF_HAND:
+#
+########################### Conditions ###########################
+#   regions:                        Specify the World Guard region(s) a reward can be caught in
+#       - ''
+#   biomes:                         Specify the Biomes a reward can be caught in.
+#       - ''
+#   permission:                     Specify a player permission needed for a reward to be caught. Permissions with always be prefixed with "fishingrewards."
+#   time:                           Specify the time required for a reward can be caught in. Based on minecraft ticks.
+#   weather:                        Specify the weather conditions needed to catch a reward. Clear/Rain/Thunder
+#
+########################### Item Example ###########################
+# Example-Drop:
+#   type: 'item'
+#   chance: 100
+#   material: 'LEATHER'
+#   amount: '1-5'
+#   name: '&cExample Item'
+#   lore:
+#     - 'First line'
+#     - '&bSecond line'
+#   enchantments:
+#     - 'unbreaking:1-3:1'
+#   durability: '10-100'
+#   xp: '10'
+#   consumed: true
+#   message: 'WOAH! RARE DROP!'
+#   commands:
+#     - 'say %player% GOT A RARE DROP!'
+#     - 'warp RewardSpot %player%'
+#   regions:
+#     - 'HUB'
+#     - 'Area64'
+#   biomes:
+#     - 'jungle'
+#     - 'plains'
+#   permission: 'example_drop'
+#   weather: 'thunder'
+#   treasure: true
+#
+########################### Entity Example ###########################
+# Speedy-Zombie:
+#   type: 'entity'
+#   entity-type: 'ZOMBIE'
+#   name: 'The Flash'
+#   attributes:
+#       health: 1
+#       speed: 10
+#   equipment:
+#       HEAD:
+#           material: 'LEATHER_HELMET'
+#       LEGS:
+#           material: 'DIAMOND_BOOTS'
+#           enchantments:
+#               - 'PROTECTION:5:100'
+#           drops:
+#               damaged: true
+#               chance: 100
+#   drops:
+#       ROTTEN_FLESH:
+#           amount: '1-10'
+#           chance: 100
+#       SUGAR:
+#           amount: '1-2'
+#           chance: 5.5
+#
+
+Cod:
+    material: 'cod'
+    type: 'item'
+    chance: 600
+Salmon:
+    material: 'salmon'
+    type: 'item'
+    chance: 250
+Clownfish:
+    material: 'tropical_fish'
+    type: 'item'
+    chance: 20
+Pufferfish:
+    material: 'pufferfish'
+    type: 'item'
+    chance: 130
+Bow:
+    material: 'bow'
+    type: 'item'
+    chance: 167
+    treasure: true
+EnchantedBook:
+    material: 'enchanted_book'
+    type: 'item'
+    chance: 167
+    enchantment-amount: 1
+    enchantments:
+        - 'efficiency:1:10'
+    treasure: true
+FishingRod:
+    material: 'fishing_rod'
+    type: 'item'
+    chance: 167
+    treasure: true
+NautilusShell:
+    material: 'nautilus_shell'
+    type: 'item'
+    chance: 167
+    treasure: true
+Saddle:
+    material: 'saddle'
+    type: 'item'
+    chance: 167
+    treasure: true
+LilyPad:
+    material: 'lily_pad'
+    type: 'item'
+    chance: 170
+Bowl:
+    material: 'bowl'
+    type: 'item'
+    chance: 100
+    junk: true
+JunkFishingRod:
+    material: 'fishing_rod'
+    type: 'item'
+    chance: 200
+    durability: '10-99'
+    junk: true
+Leather:
+    material: 'leather'
+    type: 'item'
+    chance: 100
+LeatherBoots:
+    material: 'leather_boots'
+    type: 'item'
+    chance: 100
+    durability: '10-100'
+    junk: true
+Stick:
+    material: 'stick'
+    type: 'item'
+    chance: 50
+    junk: true
+String:
+    material: 'string'
+    type: 'item'
+    chance: 50
+GlassBottle:
+    material: 'glass_bottle'
+    type: 'item'
+    chance: 100
+    junk: true
+Bone:
+    material: 'bone'
+    type: 'item'
+    chance: 100
+InkSac:
+    material: 'ink_sac'
+    type: 'item'
+    chance: 10
+TripwireHook:
+    material: 'tripwire_hook'
+    type: 'item'
+    chance: 100
