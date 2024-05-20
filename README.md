@@ -41,3 +41,10 @@ A Minecraft 1.20 Plugin using Spigot API to customize fishing rewards.
 - Permission
 - Ingame Time
 - Weather
+
+# Planned Features
+- New reward type: Money
+- More Entity Customization
+- NBT tag support
+- More Drop Modes
+- Ingame Reward Creator
