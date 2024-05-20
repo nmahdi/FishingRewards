@@ -31,13 +31,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class PluginManager implements Listener {
 
-	/**
-	 * TODO:
-	 * 	Fix/Test the following:
-	 * 		- Rework config updater
-	 */
-
-
 	private final FishingRewards plugin;
 	private final PluginLogger logger;
 	private final ConfigManager configManager;
