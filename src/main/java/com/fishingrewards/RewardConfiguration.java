@@ -328,4 +328,9 @@ public class RewardConfiguration {
     public YamlConfiguration getConfiguration() {
         return yml;
     }
+
+    public enum RewardType {
+        ITEM,
+        ENTITY;
+    }
 }

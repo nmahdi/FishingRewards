@@ -118,8 +118,6 @@ public class FishingReward implements Comparable<FishingReward> {
 		weather[condition.getId()] = true;
 	}
 
-
-	//Minecraft tick time
 	public void addTimeCondition(int[] time){
 		this.time = time;
 	}
@@ -147,7 +145,6 @@ public class FishingReward implements Comparable<FishingReward> {
 	public void setJunk(){
 		this.junk = true;
 	}
-
 
 	@Override
 	public int compareTo(FishingReward reward) {

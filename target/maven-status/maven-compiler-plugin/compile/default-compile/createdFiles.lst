@@ -16,6 +16,6 @@ com\fishingrewards\rewards\item\ItemStackBuilder.class
 com\fishingrewards\ConfigManager$Luck.class
 com\fishingrewards\PluginManager$1.class
 com\fishingrewards\rewards\SpawnedReward.class
+com\fishingrewards\RewardConfiguration$RewardType.class
 com\fishingrewards\rewards\item\FishingItemReward.class
 com\fishingrewards\rewards\SpawnedReward$1.class
-com\fishingrewards\rewards\RewardType.class

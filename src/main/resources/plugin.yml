@@ -1,6 +1,6 @@
 name: FishingRewards
 author: Mahdi_
-version: 1.1.0
+version: 2.0
 main: com.fishingrewards.FishingRewards
 api-version: '1.20'
 softdepend: [WorldGuard]

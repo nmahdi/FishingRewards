@@ -11,15 +11,13 @@ import org.bukkit.entity.Player;
 
 public class FishingRewardsCommand implements CommandExecutor {
 
-    private ConfigManager configManager;
     private PluginManager pluginManager;
 
-    private String[] help = {"&7/fishingrewards open - Opens a GUI of the loaded rewards.", "&7/fishingrewards mode [weight/roll/treasure] - Changes the Reward Mode and automatically reloads rewards.yml", "&7/fishingrewards reload - Reloads rewards.yml"};
+    private String[] help = {"&7/fishingrewards gui - Opens a GUI of the loaded rewards.", "&7/fishingrewards reload - Reloads config and rewards files."};
     private String noPerm = "&5Insufficient Permissions.";
     private String notPlayer = "&5You have to be a player to execute this command.";
 
     public FishingRewardsCommand(FishingRewards plugin){
-        this.configManager = plugin.getConfigManager();
         this.pluginManager = plugin.getPluginManager();
         plugin.getCommand("fishingrewards").setExecutor(this);
     }
@@ -31,34 +29,24 @@ public class FishingRewardsCommand implements CommandExecutor {
                 sender.sendMessage(noPerm);
                 return true;
             }
-            if (args.length > 0) {
-                switch (args[0]) {
-                    case "open":
-                        if (sender instanceof Player) {
-                            pluginManager.openRewardGUI((Player) sender, 0);
-                            return true;
-                        }
-                        sender.sendMessage(notPlayer);
-                        return true;
-                    case "mode":
-                        if (args.length > 1) {
-                            ConfigManager.RewardMode mode = ConfigManager.RewardMode.valueOf(args[1].toUpperCase());
-                            configManager.setRewardMode(mode);
-                            pluginManager.reload();
-                            return true;
-                        }
-                        sender.sendMessage(ChatColor.GRAY + "Current mode is '" + configManager.getRewardMode().toString() + "'");
-                        return true;
-                    case "reload":
-                        pluginManager.reload();
-                        return true;
-                }
-            } else {
-                for (String s : help) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
-                }
-                return true;
-            }
+             switch(args.length){
+                 case 0:
+                     sender.sendMessage(help);
+                     return true;
+                 case 1:
+                     if(args[0].equalsIgnoreCase("gui")){
+                         if(sender instanceof Player player){
+                             pluginManager.openRewardGUI(player, 0);
+                         }else{
+                             sender.sendMessage(notPlayer);
+                         }
+                         return true;
+                     }
+                     if(args[0].equalsIgnoreCase("reload")){
+                         pluginManager.reload();
+                         return true;
+                     }
+             }
         }
         return true;
     }

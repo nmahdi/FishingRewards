@@ -35,7 +35,6 @@ public class PluginManager implements Listener {
 	 * TODO:
 	 * 	Fix/Test the following:
 	 * 		- Rework config updater
-	 * 		- GUI
 	 */
 
 
@@ -47,20 +46,19 @@ public class PluginManager implements Listener {
 	private final ArrayList<FishingReward> rewardsList = new ArrayList<>();
 
     private final ArrayList<SpawnedReward> spawnedRewards = new ArrayList<>();
-	private final ArrayList<UUID> spawnedItems = new ArrayList<>();
 
 	private final String guiName = ChatColor.translateAlternateColorCodes('&', "Rewards: Page ");
-	private double totalPages;
-	private final int itemsPerPage = 20;
 	private final ItemStack BACK = new ItemStackBuilder().setMaterial(Material.ARROW).setName("&8BACK").build();
 	private final ItemStack NEXT = new ItemStackBuilder().setMaterial(Material.ARROW).setName("&8NEXT").build();
 	private final ItemStack FILLER = new ItemStackBuilder().setMaterial(Material.BLACK_STAINED_GLASS_PANE).setName(" ").build();
+	private double totalPages;
+	private final int itemsPerPage = 45;
 
 	public PluginManager(FishingRewards plugin){
 		this.plugin = plugin;
 		this.logger = plugin.getFishingLogger();
 		this.configManager = plugin.getConfigManager();
-		loadRewards(configManager.getRewardsConfig());
+		loadRewards();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -68,14 +66,15 @@ public class PluginManager implements Listener {
 		rewardsList.add(reward);
 	}
 
-
 	public void reload(){
 		rewardsList.clear();
-		loadRewards(configManager.getRewardsConfig());
-		logger.log("Rewards have been reloaded.");
+		configManager.loadConfig();
+		loadRewards();
+		logger.log("Config & Rewards have been reloaded.");
 	}
 
-	private void loadRewards(RewardConfiguration yml){
+	private void loadRewards(){
+		RewardConfiguration yml = configManager.getRewardsConfig();
 		Set<String> rewards = yml.getKeys();
 		for(String rewardString : rewards){
 			FishingReward fishingReward;
@@ -84,7 +83,7 @@ public class PluginManager implements Listener {
 
 			if(!yml.hasRewardType()){
 				logger.rewardError(rewardString, RewardConfiguration.TYPE);
-				return;
+				continue;
 			}
 
 			switch(yml.getRewardType()){
@@ -100,7 +99,7 @@ public class PluginManager implements Listener {
 				case ENTITY:
 					if(!yml.hasEntityType()){
 						logger.rewardError(rewardString, RewardConfiguration.ENTITY_TYPE);
-						return;
+						continue;
 					}
 
 					fishingReward = new FishingEntityReward(yml.getEntityType());
@@ -109,10 +108,10 @@ public class PluginManager implements Listener {
 					ArrayList<MobDropContainer> drops = yml.getDrops();
 					((FishingEntityReward)fishingReward).setEquipment(yml.getEquipment(drops));
 					((FishingEntityReward)fishingReward).setDrops(drops);
-					
 					break;
 
 			}
+
 			if(!yml.hasChance()) {
 				logger.rewardError(rewardString, RewardConfiguration.CHANCE);
 				return;
@@ -254,7 +253,6 @@ public class PluginManager implements Listener {
 					}
 					cumulativeWeight+=weight;
 					if(rollWeight < cumulativeWeight){
-						logger.log("Rolled: " + rollWeight + "Out of " + totalWeight + "/Weight: " + weight + "/Cumulative: " + cumulativeWeight + "/Luck Multiplier: " + luckMultiplier + "/Luck Divider: " + luckDividier);
 						attachToRod(e, reward);
 						break;
 					}
@@ -282,7 +280,7 @@ public class PluginManager implements Listener {
 		Entity entity = null;
 		if(reward instanceof FishingItemReward itemReward){
 
-			if (e.getCaught() instanceof Item) ((Item) e.getCaught()).setItemStack(new ItemStackBuilder().buildFromContainer(logger, itemReward.getItemStackContainer(), random).build());
+			if (e.getCaught() instanceof Item) ((Item) e.getCaught()).setItemStack(new ItemStackBuilder().buildFromContainer(itemReward.getItemStackContainer(), random).build());
 			entity = e.getCaught();
 
 		}else if(reward instanceof FishingEntityReward entityReward){
@@ -296,7 +294,7 @@ public class PluginManager implements Listener {
 					}
 				}
 				for(EquipmentSlot equipmentSlot : EquipmentSlot.values()){
-					if(entityReward.getEquipment(equipmentSlot) != null) livingEntity.getEquipment().setItem(equipmentSlot, new ItemStackBuilder().buildFromContainer(logger, entityReward.getEquipment(equipmentSlot), random).build());
+					if(entityReward.getEquipment(equipmentSlot) != null) livingEntity.getEquipment().setItem(equipmentSlot, new ItemStackBuilder().buildFromContainer(entityReward.getEquipment(equipmentSlot), random).build());
 				}
 				livingEntity.setHealth(entityReward.getAttribute(Attribute.GENERIC_MAX_HEALTH));
 			}
@@ -381,7 +379,7 @@ public class PluginManager implements Listener {
 				for (MobDropContainer mobDrop : entityReward.getDrops()) {
 					double chance = random.nextDouble(0, 100);
 					if (chance <= mobDrop.getChance()) {
-						drops.add(new ItemStackBuilder().buildFromContainer(logger, mobDrop.getItemStackContainer(), random).build());
+						drops.add(new ItemStackBuilder().buildFromContainer(mobDrop.getItemStackContainer(), random).build());
 					}
 
 				}
@@ -394,16 +392,6 @@ public class PluginManager implements Listener {
 		}
 	}
 
-
-	public SpawnedReward getSpawnedReward(UUID entityUUID){
-		for (SpawnedReward spawnedReward : spawnedRewards) {
-			if (spawnedReward.getRewardUUID().equals(entityUUID)){
-				return spawnedReward;
-			}
-		}
-		return null;
-	}
-
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e){
 		if(e.getWhoClicked() instanceof Player player){
@@ -412,13 +400,13 @@ public class PluginManager implements Listener {
 				if(e.getCurrentItem() == null) return;
 				int currentPage = Integer.parseInt(e.getView().getTitle().replace(guiName, ""))-1;
 				if(e.getCurrentItem().isSimilar(NEXT)){
-					if(currentPage+1 <= totalPages) {
+					if(currentPage+1 < (int)totalPages) {
 						openRewardGUI(player, currentPage+1);
 						return;
 					}
 				}
 				if(e.getCurrentItem().isSimilar(BACK)){
-					if(currentPage-1 > 0){
+					if(currentPage > 0){
 						openRewardGUI(player, currentPage-1);
 					}
 				}
@@ -426,7 +414,6 @@ public class PluginManager implements Listener {
 		}
 
 	}
-
 
 	public void openRewardGUI(Player player, int page){
 		if(page > totalPages) return;
@@ -540,7 +527,7 @@ public class PluginManager implements Listener {
 		}
 
 		if(page > 0) inventory.setItem(45, BACK);
-		if(page < totalPages-1) inventory.setItem(53, NEXT);
+		if(page < (int)totalPages-1) inventory.setItem(53, NEXT);
 
 		for(int i = 0; i < inventory.getSize(); i++){
 			if(inventory.getItem(i) == null) inventory.setItem(i, FILLER);
@@ -550,8 +537,19 @@ public class PluginManager implements Listener {
 
 	}
 
+	public SpawnedReward getSpawnedReward(UUID entityUUID){
+		for (SpawnedReward spawnedReward : spawnedRewards) {
+			if (spawnedReward.getRewardUUID().equals(entityUUID)){
+				return spawnedReward;
+			}
+		}
+		return null;
+	}
+
 	public ArrayList<SpawnedReward> getSpawnedRewards() {
 		return spawnedRewards;
 	}
+
+
 
 }

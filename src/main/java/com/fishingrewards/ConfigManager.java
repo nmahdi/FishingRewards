@@ -16,7 +16,6 @@ public class ConfigManager {
     private final FishingRewards plugin;
     private final PluginLogger logger;
 
-    private final File rewardsFolder;
     private final File configFile;
     private final File rewardsFile;
     private RewardConfiguration rewardsConfig;
@@ -24,7 +23,6 @@ public class ConfigManager {
 
     private boolean worldGuardEnabled = false;
 
-    //Settings
     private int configVersion = 1;
     private int itemClearTime = 60;
     private double luckIncrease = 2;
@@ -40,20 +38,36 @@ public class ConfigManager {
         this.plugin = plugin;
         this.logger = plugin.getFishingLogger();
         if(plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) worldGuardEnabled = true;
-        rewardsFolder = new File(plugin.getDataFolder(), "rewards");
         configFile = new File(plugin.getDataFolder(), "config.yml");
         rewardsFile = new File(plugin.getDataFolder(), "rewards.yml");
+        loadConfig();
+    }
 
+    public void loadConfig(){
         if(!configFile.exists()) {
             logger.log("Creating default config.yml file...");
+            try {
+                configFile.createNewFile();
+                logger.log("Successfully created config.yml");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             plugin.saveResource("config.yml", false);
+            logger.log("config.yml defaults copied.");
         }
         config = YamlConfiguration.loadConfiguration(configFile);
 
 
         if(!rewardsFile.exists()) {
             logger.log("Creating default rewards.yml file...");
+            try {
+                rewardsFile.createNewFile();
+                logger.log("Successfully created rewards.yml.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             plugin.saveResource("rewards.yml", false);
+            logger.log("rewards.yml defaults copied.");
         }
         rewardsConfig = new RewardConfiguration(YamlConfiguration.loadConfiguration(rewardsFile));
 
@@ -149,73 +163,71 @@ public class ConfigManager {
                             for(String current : line.split(",")){
 
                                 if(current.startsWith("M:")){
-                                    rewardsConfig.set("Drop"+count+".Material", current.substring(2));
-                                    rewardsConfig.set("Drop"+count+".Type", "item");
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_MATERIAL, current.substring(2).toLowerCase());
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.TYPE, "item");
                                 }
                                 if(current.startsWith("W:")){
-                                    rewardsConfig.set("Drop"+count+".Chance", Integer.parseInt(current.substring(2)));
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CHANCE, Integer.parseInt(current.substring(2)));
                                 }
                                 if(current.startsWith("N:")){
-                                    rewardsConfig.set("Drop"+count+"Name", current.substring(2));
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.DISPLAY_NAME, current.substring(2));
                                 }
 
                                 if(current.startsWith("L:")){
                                     ArrayList<String> lore = new ArrayList<>(Arrays.asList(current.substring(2).split("/n")));
-                                    rewardsConfig.set("Drop"+count+".Lore", lore);
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_LORE, lore);
                                 }
 
                                 if(current.startsWith("CM:")){
-                                    rewardsConfig.set("Drop"+count+".Message", current.substring(3));
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CATCH_MESSAGE, current.substring(3));
                                 }
 
                                 if(current.startsWith("C:")){
                                     ArrayList<String> commands = new ArrayList<>(Arrays.asList(current.substring(2).split("/n")));
-                                    rewardsConfig.set("Drop"+count+".Commands", commands);
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.COMMANDS, commands);
                                 }
 
                                 if(current.startsWith("E:")){
                                     ArrayList<String> enchants = new ArrayList<>();
-                                    for(String enchant : Arrays.asList(current.substring(2).split(" "))){
-                                        Enchantment mcEnchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchant));
-                                        if(mcEnchant != null) enchants.add(mcEnchant.getKey().getKey() + " " + mcEnchant.getStartLevel() + "-" + mcEnchant.getMaxLevel() +" 10");
+                                    for(String enchant : Arrays.asList(current.substring(2).split(" "))) {
+                                        if (!enchant.equalsIgnoreCase("all")) {
+                                            Enchantment mcEnchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchant));
+                                            if (mcEnchant != null)
+                                                enchants.add(mcEnchant.getKey().getKey() + ":" + mcEnchant.getStartLevel() + "-" + mcEnchant.getMaxLevel());
+                                        }else{
+                                            for(Enchantment enchantment : Enchantment.values()){
+                                                enchants.add(enchantment.getKey().getKey() + ":" + enchantment.getStartLevel() + "-" + enchantment.getMaxLevel() + ":10");
+                                            }
+                                            break;
+                                        }
                                     }
-                                    rewardsConfig.set("Drop"+count+".Enchantments", enchants);
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_ENCHANTS, enchants);
+                                }
+
+                                if(current.startsWith("EA:")){
+                                    String[] ea = current.substring(2).split(" ");
+                                    rewardsConfig.set("Reward" + count + "." + RewardConfiguration.ITEM_BONUS_ENCHANTMENT_AMOUNT, Integer.valueOf(ea[0]));
                                 }
 
                                 if(current.startsWith("D:")){
                                     if(current.substring(2).startsWith("true")) {
-
                                         String[] durability = current.substring(7).split(" ");
-                                        if (durability.length > 1) {
-                                            rewardsConfig.set("Drop" + count + ".Durability", durability[0] + "-" + durability[1]);
-                                        } else {
-                                            rewardsConfig.set("Drop" + count + ".Durability", durability[0]);
-                                        }
+                                        rewardsConfig.set("Reward" + count + "." + RewardConfiguration.ITEM_DURABILITY, durability.length > 1 ? durability[0] + "-" + durability[1] : durability[0]);
                                     }
                                 }
 
                                 if(current.startsWith("A:")){
                                     String[] amount = current.substring(2).split(" ");
-
-                                    if(amount.length > 1){
-                                        rewardsConfig.set("Drop"+count+".Amount", amount[0] + "-" + amount[1]);
-                                    }else{
-                                        rewardsConfig.set("Drop"+count+".Amount", amount[0]);
-                                    }
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_AMOUNT, amount.length > 1 ? amount[0] + "-" + amount[1] : amount[0]);
                                 }
 
                                 if(current.startsWith("XP:")){
                                     String[] exp = current.substring(3).split(" ");
-
-                                    if(exp.length > 1){
-                                        rewardsConfig.set("Drop"+count+".XP", exp[0] + "-" + exp[1]);
-                                    }else{
-                                        rewardsConfig.set("Drop"+count+".XP", exp[0]);
-                                    }
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.XP, exp.length > 1 ? exp[0] + "-" + exp[1] : exp[0]);
                                 }
 
                                 if(current.startsWith("CN:")){
-                                    rewardsConfig.set("Drop"+count+".CN", current.substring(3));
+                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CATCH_MESSAGE, current.substring(3));
                                 }
                             }
 
@@ -224,6 +236,7 @@ public class ConfigManager {
 
                     }
                     plugin.saveResource("config.yml", true);
+                    logger.log("Successfully updated config.yml");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -272,12 +285,8 @@ public class ConfigManager {
     }
 
     //For Debug Purposes
-    public void setRewardMode(RewardMode mode){
+    public void setRewardMode(RewardMode mode) {
         this.rewardMode = mode;
-    }
-
-    public File getRewardsFolder() {
-        return rewardsFolder;
     }
 
     public File getRewardsFile() {

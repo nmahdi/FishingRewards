@@ -21,7 +21,7 @@ public class ItemStackBuilder {
     private ItemMeta meta;
     private final ArrayList<String> lore = new ArrayList<>();
 
-    public ItemStackBuilder buildFromContainer(PluginLogger logger, ItemStackContainer container, Random random){
+    public ItemStackBuilder buildFromContainer(ItemStackContainer container, Random random){
         this.itemStack = new ItemStack(container.getMaterial());
         this.meta = itemStack.getItemMeta();
         if(container.staticAmount()){
@@ -36,26 +36,20 @@ public class ItemStackBuilder {
         int bonusAmount = container.getBonusEnchantmentsAmount();
         if(!container.hasBonusEnchantmentsAmount()) bonusAmount = container.getBonusEnchantments().size();
 
-        logger.log("bonus amount: " + bonusAmount);
-
         for(EnchantmentContainer enchantmentContainer : container.getBonusEnchantments()){
             if(bonusAmount == 0) break;
             double chance = random.nextDouble(100);
-            logger.log("Attemtping to add " + enchantmentContainer.getEnchantment().getKey() + ". Need " + enchantmentContainer.getChance() + ", rolled a " + chance);
             if(chance <= enchantmentContainer.getChance()){
                 addEnchantment(enchantmentContainer.getEnchantment(), random.nextInt(enchantmentContainer.getMinLevel(), enchantmentContainer.getMaxLevel()+1));
                 bonusAmount--;
-                logger.log("Added");
             }
         }
         if(!container.hasBonusEnchantmentsAmount()) bonusAmount = 0;
-        logger.log("Bonus Enchantments added, left " + bonusAmount);
 
         ArrayList<EnchantmentContainer> guaranteedEnchantments = new ArrayList<>(container.getGuaranteedEnchantments());
         int guaranteedAmount = container.getGuaranteedEnchantmentsAmount();
         if(container.overrideBonusEnchantments()) guaranteedAmount += bonusAmount;
         if(!container.hasGuaranteedEnchantmentsAmount()) guaranteedAmount = container.getGuaranteedEnchantments().size();
-        logger.log("Guaranteed amount: " + guaranteedAmount);
 
         for(int i = 0; i < guaranteedEnchantments.size()-guaranteedAmount; i++){
             guaranteedEnchantments.remove(random.nextInt(guaranteedEnchantments.size()));
