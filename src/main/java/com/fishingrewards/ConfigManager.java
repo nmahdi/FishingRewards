@@ -46,12 +46,6 @@ public class ConfigManager {
     public void loadConfig(){
         if(!configFile.exists()) {
             logger.log("Creating default config.yml file...");
-            try {
-                configFile.createNewFile();
-                logger.log("Successfully created config.yml");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             plugin.saveResource("config.yml", false);
             logger.log("config.yml defaults copied.");
         }
@@ -60,12 +54,6 @@ public class ConfigManager {
 
         if(!rewardsFile.exists()) {
             logger.log("Creating default rewards.yml file...");
-            try {
-                rewardsFile.createNewFile();
-                logger.log("Successfully created rewards.yml.");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             plugin.saveResource("rewards.yml", false);
             logger.log("rewards.yml defaults copied.");
         }

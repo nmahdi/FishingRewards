@@ -12,9 +12,9 @@ import java.util.HashMap;
 public class FishingEntityReward extends FishingReward {
 
     private EntityType entityType;
-    private HashMap<Attribute, Double> attributes;
-    private ArrayList<MobDropContainer> drops;
-    private HashMap<EquipmentSlot, ItemStackContainer> equipment;
+    private HashMap<Attribute, Double> attributes = new HashMap<>();
+    private ArrayList<MobDropContainer> drops = new ArrayList<>();
+    private HashMap<EquipmentSlot, ItemStackContainer> equipment = new HashMap<>();
 
     public FishingEntityReward(EntityType entityType) {
         this.entityType = entityType;

@@ -97,9 +97,10 @@ public class PluginManager implements Listener {
 
 					fishingReward = new FishingEntityReward(yml.getEntityType());
 
-					((FishingEntityReward)fishingReward).setAttributes(yml.getEntityAttributes());
-					ArrayList<MobDropContainer> drops = yml.getDrops();
-					((FishingEntityReward)fishingReward).setEquipment(yml.getEquipment(drops));
+					if(yml.hasEntityAttributes()) ((FishingEntityReward)fishingReward).setAttributes(yml.getEntityAttributes());
+					ArrayList<MobDropContainer> drops = new ArrayList<>();
+					if(yml.hasDrops()) drops.addAll(yml.getDrops());
+					if(yml.hasEquipment()) ((FishingEntityReward)fishingReward).setEquipment(yml.getEquipment(drops));
 					((FishingEntityReward)fishingReward).setDrops(drops);
 					break;
 
@@ -289,7 +290,7 @@ public class PluginManager implements Listener {
 				for(EquipmentSlot equipmentSlot : EquipmentSlot.values()){
 					if(entityReward.getEquipment(equipmentSlot) != null) livingEntity.getEquipment().setItem(equipmentSlot, new ItemStackBuilder().buildFromContainer(entityReward.getEquipment(equipmentSlot), random).build());
 				}
-				livingEntity.setHealth(entityReward.getAttribute(Attribute.GENERIC_MAX_HEALTH));
+				if(entityReward.hasAttribute(Attribute.GENERIC_MAX_HEALTH)) livingEntity.setHealth(entityReward.getAttribute(Attribute.GENERIC_MAX_HEALTH));
 			}
 
 

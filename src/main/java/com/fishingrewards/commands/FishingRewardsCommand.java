@@ -14,8 +14,8 @@ public class FishingRewardsCommand implements CommandExecutor {
     private PluginManager pluginManager;
 
     private String[] help = {"&7/fishingrewards gui - Opens a GUI of the loaded rewards.", "&7/fishingrewards reload - Reloads config and rewards files."};
-    private String noPerm = "&5Insufficient Permissions.";
-    private String notPlayer = "&5You have to be a player to execute this command.";
+    private String noPerm = ChatColor.translateAlternateColorCodes('&', "&5Insufficient Permissions.");
+    private String notPlayer = ChatColor.translateAlternateColorCodes('&', "&5You have to be a player to execute this command.");
 
     public FishingRewardsCommand(FishingRewards plugin){
         this.pluginManager = plugin.getPluginManager();
@@ -31,7 +31,9 @@ public class FishingRewardsCommand implements CommandExecutor {
             }
              switch(args.length){
                  case 0:
-                     sender.sendMessage(help);
+                     for(int i = 0; i < help.length; i++){
+                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', help[i]));
+                     }
                      return true;
                  case 1:
                      if(args[0].equalsIgnoreCase("gui")){
