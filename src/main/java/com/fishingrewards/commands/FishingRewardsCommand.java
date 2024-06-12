@@ -1,8 +1,8 @@
 package com.fishingrewards.commands;
 
-import com.fishingrewards.ConfigManager;
-import com.fishingrewards.FishingRewards;
-import com.fishingrewards.PluginManager;
+import com.fishingrewards.*;
+import com.fishingrewards.listeners.GUIHandler;
+import com.fishingrewards.rewards.RewardManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,14 +11,21 @@ import org.bukkit.entity.Player;
 
 public class FishingRewardsCommand implements CommandExecutor {
 
-    private PluginManager pluginManager;
+    private PluginLogger logger;
+    private ConfigManager configManager;
+    private RewardManager rewardManager;
+    private GUIHandler guiHandler;
 
     private String[] help = {"&7/fishingrewards gui - Opens a GUI of the loaded rewards.", "&7/fishingrewards reload - Reloads config and rewards files."};
     private String noPerm = ChatColor.translateAlternateColorCodes('&', "&5Insufficient Permissions.");
     private String notPlayer = ChatColor.translateAlternateColorCodes('&', "&5You have to be a player to execute this command.");
+    private String reloaded = ChatColor.GREEN + "Config & Rewards have been reloaded.";
 
     public FishingRewardsCommand(FishingRewards plugin){
-        this.pluginManager = plugin.getPluginManager();
+        this.logger = plugin.getFishingLogger();
+        this.configManager = plugin.getConfigManager();
+        this.rewardManager = plugin.getRewardManager();
+        this.guiHandler = plugin.getGuiHandler();
         plugin.getCommand("fishingrewards").setExecutor(this);
     }
 
@@ -31,26 +38,35 @@ public class FishingRewardsCommand implements CommandExecutor {
             }
              switch(args.length){
                  case 0:
-                     for(int i = 0; i < help.length; i++){
-                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', help[i]));
-                     }
+                     sendHelpMessage(sender);
                      return true;
                  case 1:
                      if(args[0].equalsIgnoreCase("gui")){
                          if(sender instanceof Player player){
-                             pluginManager.openRewardGUI(player, 0);
+                             guiHandler.openRewardGUI(player, 0);
                          }else{
                              sender.sendMessage(notPlayer);
                          }
                          return true;
                      }
                      if(args[0].equalsIgnoreCase("reload")){
-                         pluginManager.reload();
+                         rewardManager.reload();
+                         configManager.loadConfig();
+                         guiHandler.load();
+                         logger.log(reloaded);
+                         sender.sendMessage(reloaded);
                          return true;
                      }
+                 sendHelpMessage(sender);
              }
         }
         return true;
+    }
+
+    private void sendHelpMessage(CommandSender sender){
+        for (String s : help) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+        }
     }
 
 }

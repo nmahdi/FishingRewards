@@ -29,6 +29,7 @@ public class ItemStackContainer {
     private int maxDurability = -1;
     private boolean unbreakable;
     private final HashMap<Attribute, AttributeModifier> attributes = new HashMap<>();
+    private String skullID;
 
     public ItemStackContainer(Material material){
         this.material = material;
@@ -208,6 +209,18 @@ public class ItemStackContainer {
 
     public HashMap<Attribute, AttributeModifier> getAttributes() {
         return attributes;
+    }
+
+    public boolean isSkull(){
+        return material == Material.PLAYER_HEAD;
+    }
+
+    public boolean hasSkullID(){
+        return skullID != null && !skullID.isEmpty();
+    }
+
+    public String getSkullID(){
+        return skullID;
     }
 
 

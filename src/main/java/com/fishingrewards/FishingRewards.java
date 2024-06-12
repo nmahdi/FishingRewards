@@ -1,13 +1,18 @@
 package com.fishingrewards;
 
 import com.fishingrewards.commands.FishingRewardsCommand;
+import com.fishingrewards.listeners.FishingManager;
+import com.fishingrewards.listeners.GUIHandler;
+import com.fishingrewards.rewards.RewardManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FishingRewards extends JavaPlugin {
 
     private PluginLogger logger;
     private ConfigManager configManager;
-    private PluginManager pluginManager;
+    private RewardManager rewardManager;
+    private FishingManager fishingManager;
+    private GUIHandler guiHandler;
     private FishingRewardsCommand fishingRewardsCommand;
 
 
@@ -15,7 +20,9 @@ public class FishingRewards extends JavaPlugin {
     public void onEnable() {
         logger = new PluginLogger(this);
         configManager = new ConfigManager(this);
-        pluginManager = new PluginManager(this);
+        rewardManager = new RewardManager(this);
+        fishingManager = new FishingManager(this);
+        guiHandler = new GUIHandler(this);
         fishingRewardsCommand = new FishingRewardsCommand(this);
     }
 
@@ -32,7 +39,15 @@ public class FishingRewards extends JavaPlugin {
         return configManager;
     }
 
-    public PluginManager getPluginManager() {
-        return pluginManager;
+    public RewardManager getRewardManager() {
+        return rewardManager;
+    }
+
+    public FishingManager getFishingManager() {
+        return fishingManager;
+    }
+
+    public GUIHandler getGuiHandler() {
+        return guiHandler;
     }
 }

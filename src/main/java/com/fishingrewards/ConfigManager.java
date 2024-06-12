@@ -1,5 +1,6 @@
 package com.fishingrewards;
 
+import com.fishingrewards.rewards.RewardConfiguration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -71,70 +72,59 @@ public class ConfigManager {
             updateConfig(1);
         }
 
-
         String ITEM_CLEAR = "clear-items-after";
-        if(config.contains(ITEM_CLEAR)){
+        if(hasSetting(ITEM_CLEAR)){
             itemClearTime = config.getInt(ITEM_CLEAR);
-        }else{
-            logger.log(defaultValue(ITEM_CLEAR));
         }
 
         String LUCK_INCREASE = "luck-increase";
-        if(config.contains(LUCK_INCREASE)){
+        if(hasSetting(LUCK_INCREASE)) {
             luckIncrease = config.getDouble(LUCK_INCREASE);
-        }else{
-            logger.log(defaultValue(LUCK_INCREASE));
         }
 
         String LUCK_DECREASE = "luck-decrease";
-        if(config.contains(LUCK_DECREASE)){
+        if(hasSetting(LUCK_DECREASE)){
             luckDecrease = config.getDouble(LUCK_DECREASE);
-        }else{
-            logger.log(defaultValue(LUCK_DECREASE));
         }
 
         String ALLOW_LUCK_EFFECT = "allow-luck-attribute";
-        if(config.contains(ALLOW_LUCK_EFFECT)){
+        if(hasSetting(ALLOW_LUCK_EFFECT)){
             allowLuckAttribute = config.getBoolean(ALLOW_LUCK_EFFECT);
-        }else{
-            logger.log(defaultValue(ALLOW_LUCK_EFFECT));
         }
 
-        String ALLOW_OFFHAND_LUCK = "allow-offhand-luck";
-        if(config.contains(ALLOW_OFFHAND_LUCK)){
-            offhandLuck = Luck.valueOf(config.getString(ALLOW_OFFHAND_LUCK));
-        }else{
-            logger.log(defaultValue(ALLOW_OFFHAND_LUCK));
+        String OFFHAND_LUCK = "offhand-luck";
+        if(hasSetting(OFFHAND_LUCK)){
+            offhandLuck = Luck.valueOf(config.getString(OFFHAND_LUCK));
         }
 
         String PLAYER_PROTECTED_ITEMS = "player-protected-items";
-        if(config.contains(PLAYER_PROTECTED_ITEMS)){
+        if(hasSetting(PLAYER_PROTECTED_ITEMS)){
             protectedItems = config.getBoolean(PLAYER_PROTECTED_ITEMS);
-        }else{
-            logger.log(defaultValue(PLAYER_PROTECTED_ITEMS));
         }
 
         String PLAYER_PROTECTED_ENTITIES = "player-protected-entities";
-        if(config.contains(PLAYER_PROTECTED_ENTITIES)){
+        if(hasSetting(PLAYER_PROTECTED_ENTITIES)){
             protectedEntities = config.getBoolean(PLAYER_PROTECTED_ENTITIES);
-        }else{
-            logger.log(defaultValue(PLAYER_PROTECTED_ENTITIES));
         }
 
         String REWARD_MODE = "reward-mode";
-        if(config.contains(REWARD_MODE)){
+        if(hasSetting(REWARD_MODE)){
             rewardMode = RewardMode.valueOf(config.getString(REWARD_MODE));
-        }else{
-            logger.log(defaultValue(REWARD_MODE));
         }
 
         String PLAYER_PLACEHOLDER = "player-placeholder";
-        if(config.contains(PLAYER_PLACEHOLDER)){
+        if(hasSetting(PLAYER_PLACEHOLDER)){
             playerPlaceHolder = config.getString(PLAYER_PLACEHOLDER);
-        }else{
-            logger.log(defaultValue(PLAYER_PLACEHOLDER));
         }
 
+    }
+
+    private boolean hasSetting(String setting){
+        if(config.contains(setting)){
+            return true;
+        }
+        logger.log(defaultValue(setting));
+        return false;
     }
 
     private void updateConfig(int configVersion){
@@ -149,73 +139,69 @@ public class ConfigManager {
                             count++;
 
                             for(String current : line.split(",")){
+                                char letter = current.charAt(0);
 
-                                if(current.startsWith("M:")){
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_MATERIAL, current.substring(2).toLowerCase());
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.TYPE, "item");
-                                }
-                                if(current.startsWith("W:")){
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CHANCE, Integer.parseInt(current.substring(2)));
-                                }
-                                if(current.startsWith("N:")){
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.DISPLAY_NAME, current.substring(2));
-                                }
-
-                                if(current.startsWith("L:")){
-                                    ArrayList<String> lore = new ArrayList<>(Arrays.asList(current.substring(2).split("/n")));
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_LORE, lore);
-                                }
-
-                                if(current.startsWith("CM:")){
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CATCH_MESSAGE, current.substring(3));
-                                }
-
-                                if(current.startsWith("C:")){
-                                    ArrayList<String> commands = new ArrayList<>(Arrays.asList(current.substring(2).split("/n")));
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.COMMANDS, commands);
-                                }
-
-                                if(current.startsWith("E:")){
-                                    ArrayList<String> enchants = new ArrayList<>();
-                                    for(String enchant : Arrays.asList(current.substring(2).split(" "))) {
-                                        if (!enchant.equalsIgnoreCase("all")) {
-                                            Enchantment mcEnchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchant));
-                                            if (mcEnchant != null)
-                                                enchants.add(mcEnchant.getKey().getKey() + ":" + mcEnchant.getStartLevel() + "-" + mcEnchant.getMaxLevel());
-                                        }else{
-                                            for(Enchantment enchantment : Enchantment.values()){
-                                                enchants.add(enchantment.getKey().getKey() + ":" + enchantment.getStartLevel() + "-" + enchantment.getMaxLevel() + ":10");
-                                            }
+                                switch(letter){
+                                    case 'M':
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_MATERIAL, current.substring(2).toLowerCase());
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.TYPE, "item");
+                                        break;
+                                    case 'W':
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CHANCE, Integer.parseInt(current.substring(2)));
+                                        break;
+                                    case 'N':
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.DISPLAY_NAME, current.substring(2));
+                                        break;
+                                    case 'L':
+                                        ArrayList<String> lore = new ArrayList<>(Arrays.asList(current.substring(2).split("/n")));
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_LORE, lore);
+                                        break;
+                                    case 'C':
+                                        if(current.charAt(1) == 'M'){
+                                            rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CATCH_MESSAGE, current.substring(3));
+                                            break;
+                                        }else if(current.charAt(2) == 'N'){
+                                            rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CATCH_MESSAGE, current.substring(3));
                                             break;
                                         }
-                                    }
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_ENCHANTS, enchants);
-                                }
-
-                                if(current.startsWith("EA:")){
-                                    String[] ea = current.substring(2).split(" ");
-                                    rewardsConfig.set("Reward" + count + "." + RewardConfiguration.ITEM_BONUS_ENCHANTMENT_AMOUNT, Integer.valueOf(ea[0]));
-                                }
-
-                                if(current.startsWith("D:")){
-                                    if(current.substring(2).startsWith("true")) {
-                                        String[] durability = current.substring(7).split(" ");
-                                        rewardsConfig.set("Reward" + count + "." + RewardConfiguration.ITEM_DURABILITY, durability.length > 1 ? durability[0] + "-" + durability[1] : durability[0]);
-                                    }
-                                }
-
-                                if(current.startsWith("A:")){
-                                    String[] amount = current.substring(2).split(" ");
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_AMOUNT, amount.length > 1 ? amount[0] + "-" + amount[1] : amount[0]);
-                                }
-
-                                if(current.startsWith("XP:")){
-                                    String[] exp = current.substring(3).split(" ");
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.XP, exp.length > 1 ? exp[0] + "-" + exp[1] : exp[0]);
-                                }
-
-                                if(current.startsWith("CN:")){
-                                    rewardsConfig.set("Reward"+count+"." + RewardConfiguration.CATCH_MESSAGE, current.substring(3));
+                                        ArrayList<String> commands = new ArrayList<>(Arrays.asList(current.substring(2).split("/n")));
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.COMMANDS, commands);
+                                        break;
+                                    case 'E':
+                                        if(current.charAt(1) == 'A'){
+                                            String[] ea = current.substring(2).split(" ");
+                                            rewardsConfig.set("Reward" + count + "." + RewardConfiguration.ITEM_BONUS_ENCHANTMENT_AMOUNT, Integer.valueOf(ea[0]));
+                                            break;
+                                        }
+                                        ArrayList<String> enchants = new ArrayList<>();
+                                        for(String enchant : Arrays.asList(current.substring(2).split(" "))) {
+                                            if (!enchant.equalsIgnoreCase("all")) {
+                                                Enchantment mcEnchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchant));
+                                                if (mcEnchant != null)
+                                                    enchants.add(mcEnchant.getKey().getKey() + ":" + mcEnchant.getStartLevel() + "-" + mcEnchant.getMaxLevel());
+                                            }else{
+                                                for(Enchantment enchantment : Enchantment.values()){
+                                                    enchants.add(enchantment.getKey().getKey() + ":" + enchantment.getStartLevel() + "-" + enchantment.getMaxLevel() + ":10");
+                                                }
+                                                break;
+                                            }
+                                        }
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_ENCHANTS, enchants);
+                                        break;
+                                    case 'D':
+                                        if(current.substring(2).startsWith("true")) {
+                                            String[] durability = current.substring(7).split(" ");
+                                            rewardsConfig.set("Reward" + count + "." + RewardConfiguration.ITEM_DURABILITY, durability.length > 1 ? durability[0] + "-" + durability[1] : durability[0]);
+                                        }
+                                        break;
+                                    case 'A':
+                                        String[] amount = current.substring(2).split(" ");
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.ITEM_AMOUNT, amount.length > 1 ? amount[0] + "-" + amount[1] : amount[0]);
+                                        break;
+                                    case 'X':
+                                        String[] exp = current.substring(3).split(" ");
+                                        rewardsConfig.set("Reward"+count+"." + RewardConfiguration.XP, exp.length > 1 ? exp[0] + "-" + exp[1] : exp[0]);
+                                        break;
                                 }
                             }
 

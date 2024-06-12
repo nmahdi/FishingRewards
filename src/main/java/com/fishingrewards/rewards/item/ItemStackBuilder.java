@@ -2,6 +2,7 @@ package com.fishingrewards.rewards.item;
 
 import com.fishingrewards.PluginLogger;
 import com.fishingrewards.rewards.RewardAttribute;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -11,9 +12,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 public class ItemStackBuilder {
 
@@ -51,7 +56,9 @@ public class ItemStackBuilder {
         if(container.overrideBonusEnchantments()) guaranteedAmount += bonusAmount;
         if(!container.hasGuaranteedEnchantmentsAmount()) guaranteedAmount = container.getGuaranteedEnchantments().size();
 
-        for(int i = 0; i < guaranteedEnchantments.size()-guaranteedAmount; i++){
+
+        int amountToRemove = guaranteedEnchantments.size()-guaranteedAmount;
+        for(int i = 0; i < amountToRemove; i++){
             guaranteedEnchantments.remove(random.nextInt(guaranteedEnchantments.size()));
         }
         for(EnchantmentContainer enchantment : guaranteedEnchantments){

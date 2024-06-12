@@ -1,6 +1,5 @@
-package com.fishingrewards;
+package com.fishingrewards.rewards;
 
-import com.fishingrewards.rewards.*;
 import com.fishingrewards.rewards.entity.MobDropContainer;
 import com.fishingrewards.rewards.item.EnchantmentContainer;
 import com.fishingrewards.rewards.item.ItemStackContainer;
