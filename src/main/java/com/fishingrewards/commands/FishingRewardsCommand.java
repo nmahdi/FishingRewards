@@ -1,8 +1,9 @@
 package com.fishingrewards.commands;
 
 import com.fishingrewards.*;
-import com.fishingrewards.listeners.GUIHandler;
-import com.fishingrewards.rewards.RewardManager;
+import com.fishingrewards.managers.ConfigManager;
+import com.fishingrewards.managers.GUIHandler;
+import com.fishingrewards.managers.RewardManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,15 +12,15 @@ import org.bukkit.entity.Player;
 
 public class FishingRewardsCommand implements CommandExecutor {
 
-    private PluginLogger logger;
-    private ConfigManager configManager;
-    private RewardManager rewardManager;
-    private GUIHandler guiHandler;
+    private final PluginLogger logger;
+    private final ConfigManager configManager;
+    private final RewardManager rewardManager;
+    private final GUIHandler guiHandler;
 
-    private String[] help = {"&7/fishingrewards gui - Opens a GUI of the loaded rewards.", "&7/fishingrewards reload - Reloads config and rewards files."};
-    private String noPerm = ChatColor.translateAlternateColorCodes('&', "&5Insufficient Permissions.");
-    private String notPlayer = ChatColor.translateAlternateColorCodes('&', "&5You have to be a player to execute this command.");
-    private String reloaded = ChatColor.GREEN + "Config & Rewards have been reloaded.";
+    private final String[] help = {"&7/fishingrewards gui - Opens a GUI of the loaded rewards.", "&7/fishingrewards reload - Reloads config and rewards files."};
+    private final String noPerm = ChatColor.translateAlternateColorCodes('&', "&5Insufficient Permissions.");
+    private final String notPlayer = ChatColor.translateAlternateColorCodes('&', "&5You have to be a player to execute this command.");
+    private final String reloaded = ChatColor.GREEN + "Config & Rewards have been reloaded.";
 
     public FishingRewardsCommand(FishingRewards plugin){
         this.logger = plugin.getFishingLogger();
@@ -57,8 +58,8 @@ public class FishingRewardsCommand implements CommandExecutor {
                          sender.sendMessage(reloaded);
                          return true;
                      }
-                 sendHelpMessage(sender);
              }
+            sendHelpMessage(sender);
         }
         return true;
     }

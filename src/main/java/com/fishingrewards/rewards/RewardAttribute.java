@@ -3,28 +3,28 @@ package com.fishingrewards.rewards;
 import org.bukkit.attribute.Attribute;
 
 public enum RewardAttribute {
-    MaxHealth("health", Attribute.GENERIC_MAX_HEALTH),
-    FollowRange("follow-range", Attribute.GENERIC_FOLLOW_RANGE),
-    KnockbackResistance("knockback-resistance", Attribute.GENERIC_KNOCKBACK_RESISTANCE),
-    MovementSpeed("speed", Attribute.GENERIC_MOVEMENT_SPEED),
-    FlyingSpeed("flying-speed", Attribute.GENERIC_FLYING_SPEED),
-    AttackDamage("damage", Attribute.GENERIC_ATTACK_DAMAGE),
-    AttackSpeed("attack-speed", Attribute.GENERIC_ATTACK_SPEED),
-    Armor("armor", Attribute.GENERIC_ARMOR),
-    ArmorToughness("armor-toughness", Attribute.GENERIC_ARMOR_TOUGHNESS),
-    Luck("luck", Attribute.GENERIC_LUCK),
-    MaxAbsorption("absorption", Attribute.GENERIC_MAX_ABSORPTION),
+    MaxHealth("health", "GENERIC_MAX_HEALTH"),
+    FollowRange("follow-range", "GENERIC_FOLLOW_RANGE"),
+    KnockbackResistance("knockback-resistance", "GENERIC_KNOCKBACK_RESISTANCE"),
+    MovementSpeed("speed", "GENERIC_MOVEMENT_SPEED"),
+    FlyingSpeed("flying-speed", "GENERIC_FLYING_SPEED"),
+    AttackDamage("damage", "GENERIC_ATTACK_DAMAGE"),
+    AttackSpeed("attack-speed", "GENERIC_ATTACK_SPEED"),
+    Armor("armor", "GENERIC_ARMOR"),
+    ArmorToughness("armor-toughness", "GENERIC_ARMOR_TOUGHNESS"),
+    Luck("luck", "GENERIC_LUCK"),
+    MaxAbsorption("absorption", "GENERIC_MAX_ABSORPTION"),
     //Horse
-    HorseJump("horse-jump", Attribute.HORSE_JUMP_STRENGTH),
+    HorseJump("horse-jump", "HORSE_JUMP_STRENGTH"),
     //Zombie
-    ZombieSpawnReinforcements("zombie-reinforcement", Attribute.ZOMBIE_SPAWN_REINFORCEMENTS);
+    ZombieSpawnReinforcements("zombie-reinforcement", "ZOMBIE_SPAWN_REINFORCEMENTS");
 
-    private String configID;
-    private Attribute attribute;
+    private final String configID;
+    private final Attribute attribute;
 
-    RewardAttribute(String configID, Attribute attribute){
+    RewardAttribute(String configID, String attribute){
         this.configID = configID;
-        this.attribute = attribute;
+        this.attribute = Attribute.valueOf(attribute);
     }
 
     public String getConfigID() {

@@ -1,9 +1,10 @@
 package com.fishingrewards;
 
 import com.fishingrewards.commands.FishingRewardsCommand;
-import com.fishingrewards.listeners.FishingManager;
-import com.fishingrewards.listeners.GUIHandler;
-import com.fishingrewards.rewards.RewardManager;
+import com.fishingrewards.managers.ConfigManager;
+import com.fishingrewards.managers.FishingManager;
+import com.fishingrewards.managers.GUIHandler;
+import com.fishingrewards.managers.RewardManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FishingRewards extends JavaPlugin {

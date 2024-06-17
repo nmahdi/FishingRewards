@@ -1,11 +1,9 @@
-package com.fishingrewards.listeners;
+package com.fishingrewards.managers;
 
-import com.fishingrewards.ConfigManager;
 import com.fishingrewards.FishingRewards;
 import com.fishingrewards.PluginLogger;
 import com.fishingrewards.rewards.FishingReward;
 import com.fishingrewards.rewards.RewardAttribute;
-import com.fishingrewards.rewards.RewardManager;
 import com.fishingrewards.rewards.SpawnedReward;
 import com.fishingrewards.rewards.entity.FishingEntityReward;
 import com.fishingrewards.rewards.entity.MobDropContainer;
@@ -41,11 +39,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class FishingManager implements Listener {
 
-    private Random random = ThreadLocalRandom.current();
-    private FishingRewards plugin;
-    private PluginLogger logger;
-    private ConfigManager configManager;
-    private RewardManager rewardManager;
+    private final Random random = ThreadLocalRandom.current();
+    private final FishingRewards plugin;
+    private final PluginLogger logger;
+    private final ConfigManager configManager;
+    private final RewardManager rewardManager;
 
     private final ArrayList<SpawnedReward> spawnedRewards = new ArrayList<>();
 
@@ -82,6 +80,9 @@ public class FishingManager implements Listener {
         }
         if(offHand.hasItemMeta() && offHand.getItemMeta().hasEnchants() && offHand.getItemMeta().hasEnchant(Enchantment.LUCK)) {
             switch (configManager.getOffHandLuck()) {
+                default:
+                case DISABLE:
+                    break;
                 case REPLACE:
                     luckLevel = offHand.getItemMeta().getEnchantLevel(Enchantment.LUCK);
                     break;
@@ -232,6 +233,10 @@ public class FishingManager implements Listener {
 
         for(String command : reward.getCommandsRan()){
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command.replace(configManager.getPlayerPlaceHolder(), e.getPlayer().getName()));
+        }
+
+        if(reward.hasRewardSound()){
+            e.getPlayer().playSound(e.getPlayer().getLocation(), reward.getRewardSound().getSound(), reward.getRewardSound().getVolume(), reward.getRewardSound().getPitch());
         }
 
         SpawnedReward spawnedReward = new SpawnedReward(reward, e.getPlayer().getUniqueId(), entity.getUniqueId());

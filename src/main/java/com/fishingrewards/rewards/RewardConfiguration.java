@@ -6,6 +6,7 @@ import com.fishingrewards.rewards.item.ItemStackContainer;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Biome;
@@ -32,6 +33,7 @@ public class RewardConfiguration {
     public static final String TREASURE = "treasure";
     public static final String JUNK = "junk";
     public static final String DISPLAY_NAME = "name";
+    public static final String SOUND = "sound";
 
     public static final String ITEM_MATERIAL = "material";
     public static final String ITEM_AMOUNT = "amount";
@@ -49,6 +51,9 @@ public class RewardConfiguration {
     public static final String ITEM_ATTRIBUTE_OPERATION = "operation";
     public static final String ITEM_ATTRIBUTE_EQUIPMENT_SLOT = "equipment-slot";
     public static final String ITEM_DAMAGED = "damaged";
+    public static final String ITEM_SKULLURL = "skull-url";
+    public static final String POTION_EFFECTS = "potion-effects";
+    public static final String POTION_COLOR = "potion-color";
 
     public static final String ENTITY_TYPE = "entity-type";
     public static final String ENTITY_ATTRIBUTES = "attributes";
@@ -108,6 +113,15 @@ public class RewardConfiguration {
 
     public String getDisplayName(){
         return yml.getString(currentReward + DISPLAY_NAME);
+    }
+
+    public boolean hasRewardSound(){
+        return yml.contains(currentReward + SOUND);
+    }
+
+    public RewardSound getRewardSound(){
+        String[] sound = yml.getString(currentReward + SOUND).split(":");
+        return new RewardSound(Sound.valueOf(sound[0].toUpperCase()), Float.parseFloat(sound[1]), Float.parseFloat(sound[2]));
     }
 
     public boolean hasCommands(){
@@ -202,6 +216,9 @@ public class RewardConfiguration {
         HashMap<Attribute, Double> map = new HashMap<>();
         ConfigurationSection section = yml.getConfigurationSection(currentReward + ENTITY_ATTRIBUTES);
         for(RewardAttribute rewardAttribute : RewardAttribute.values()){
+            if(rewardAttribute.getAttribute() == null){
+                continue;
+            }
             if(section.contains(rewardAttribute.getConfigID())){
                 map.put(rewardAttribute.getAttribute(), section.getDouble(rewardAttribute.getConfigID()));
             }
@@ -305,7 +322,27 @@ public class RewardConfiguration {
         if(yml.contains(path + DOT + ITEM_ATTRIBUTES)){
             Set<String> attributes = yml.getConfigurationSection(path + DOT + ITEM_ATTRIBUTES).getKeys(false);
             for(RewardAttribute attribute : RewardAttribute.values()){
+                if(attribute.getAttribute() == null){
+                    continue;
+                }
                 if(attributes.contains(attribute.getConfigID())) container.addAttribute(attribute.getAttribute(), "reward", yml.getDouble(path + DOT + ITEM_ATTRIBUTES + DOT + attribute.getConfigID() + DOT + ITEM_ATTRIBUTE_VALUE), AttributeModifier.Operation.valueOf(yml.getString(path + DOT + ITEM_ATTRIBUTES + DOT + attribute.getConfigID() + DOT + ITEM_ATTRIBUTE_OPERATION)), EquipmentSlot.valueOf(yml.getString(path + DOT + ITEM_ATTRIBUTES + DOT + attribute.getConfigID() + DOT + ITEM_ATTRIBUTE_EQUIPMENT_SLOT)));
+            }
+        }
+
+        if(container.isSkull() && yml.contains(path + DOT + ITEM_SKULLURL)){
+            container.setSkullURL(yml.getString(path + DOT + ITEM_SKULLURL));
+        }
+
+        if(container.isPotion()){
+            if(yml.contains(path + DOT + POTION_EFFECTS)){
+                for(String s : yml.getStringList(path + DOT + POTION_EFFECTS)){
+                    String[] effect = s.split(":");
+                    container.addEffect(Registry.EFFECT.get(NamespacedKey.minecraft(effect[0])), Integer.parseInt(effect[2])*20, Integer.parseInt(effect[1])-1);
+                }
+            }
+            if(yml.contains(path + DOT + POTION_COLOR)){
+                String[] colors = yml.getString(path + DOT + POTION_COLOR).split(":");
+                container.setPotionColor(Integer.parseInt(colors[0]), Integer.parseInt(colors[1]), Integer.parseInt(colors[2]));
             }
         }
 

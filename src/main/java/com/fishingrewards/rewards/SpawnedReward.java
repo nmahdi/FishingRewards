@@ -1,7 +1,7 @@
 package com.fishingrewards.rewards;
 
 import com.fishingrewards.FishingRewards;
-import com.fishingrewards.ConfigManager;
+import com.fishingrewards.managers.ConfigManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 

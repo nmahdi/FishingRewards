@@ -1,8 +1,9 @@
-package com.fishingrewards.rewards;
+package com.fishingrewards.managers;
 
-import com.fishingrewards.ConfigManager;
 import com.fishingrewards.FishingRewards;
 import com.fishingrewards.PluginLogger;
+import com.fishingrewards.rewards.FishingReward;
+import com.fishingrewards.rewards.RewardConfiguration;
 import com.fishingrewards.rewards.entity.FishingEntityReward;
 import com.fishingrewards.rewards.entity.MobDropContainer;
 import com.fishingrewards.rewards.item.FishingItemReward;
@@ -75,6 +76,7 @@ public class RewardManager {
 
 			if(yml.hasCommands()) fishingReward.setCommandsRan(yml.getComamnds());
 			if(yml.hasDisplayName()) fishingReward.setName(yml.getDisplayName());
+			if(yml.hasRewardSound()) fishingReward.setRewardSound(yml.getRewardSound());
 			if(yml.hasXP()) fishingReward.setXP(yml.getXP());
 			if(yml.hasCatchMessage()) fishingReward.setCatchMessage(yml.getCatchMessage());
 			if(yml.hasRegions()) fishingReward.addRegionCondition(yml.getRegions());

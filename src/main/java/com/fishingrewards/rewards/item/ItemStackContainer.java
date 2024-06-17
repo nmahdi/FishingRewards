@@ -1,10 +1,14 @@
 package com.fishingrewards.rewards.item;
 
+import it.unimi.dsi.fastutil.Hash;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +33,9 @@ public class ItemStackContainer {
     private int maxDurability = -1;
     private boolean unbreakable;
     private final HashMap<Attribute, AttributeModifier> attributes = new HashMap<>();
-    private String skullID;
+    private String skullURL;
+    private ArrayList<PotionEffect> effects = new ArrayList<>();
+    private Color potionColor;
 
     public ItemStackContainer(Material material){
         this.material = material;
@@ -215,12 +221,44 @@ public class ItemStackContainer {
         return material == Material.PLAYER_HEAD;
     }
 
-    public boolean hasSkullID(){
-        return skullID != null && !skullID.isEmpty();
+    public void setSkullURL(String url){
+        this.skullURL = url;
     }
 
-    public String getSkullID(){
-        return skullID;
+    public boolean hasSkullURL(){
+        return skullURL != null && !skullURL.isEmpty();
+    }
+
+    public String getSkullURL(){
+        return skullURL;
+    }
+
+    public boolean isPotion(){
+        return material == Material.POTION || material == Material.SPLASH_POTION || material == Material.LINGERING_POTION;
+    }
+
+    public boolean hasEffects(){
+        return !effects.isEmpty();
+    }
+
+    public void addEffect(PotionEffectType type, int duration, int level){
+        effects.add(new PotionEffect(type, duration, level));
+    }
+
+    public ArrayList<PotionEffect> getEffects(){
+        return effects;
+    }
+
+    public boolean hasPotionColor(){
+        return potionColor != null;
+    }
+
+    public void setPotionColor(int r, int g, int b){
+        this.potionColor = Color.fromRGB(r, g, b);
+    }
+
+    public Color getPotionColor(){
+        return potionColor;
     }
 
 

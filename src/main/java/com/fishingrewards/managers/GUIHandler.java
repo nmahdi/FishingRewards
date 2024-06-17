@@ -1,9 +1,7 @@
-package com.fishingrewards.listeners;
+package com.fishingrewards.managers;
 
-import com.fishingrewards.ConfigManager;
 import com.fishingrewards.FishingRewards;
 import com.fishingrewards.rewards.FishingReward;
-import com.fishingrewards.rewards.RewardManager;
 import com.fishingrewards.rewards.entity.FishingEntityReward;
 import com.fishingrewards.rewards.entity.MobDropContainer;
 import com.fishingrewards.rewards.item.EnchantmentContainer;
@@ -21,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public class GUIHandler implements Listener {
 
@@ -79,12 +78,11 @@ public class GUIHandler implements Listener {
         for(int i = itemsPerPage*page; i < itemsPerPage*(page+1); i++){
             if(i == rewardManager.getRewardsList().size()) break;
             FishingReward reward = rewardManager.getRewardsList().get(i);
+
             ItemStackBuilder builder = new ItemStackBuilder();
             if(reward instanceof FishingItemReward itemReward){
                 ItemStackContainer container = itemReward.getItemStackContainer();
                 builder.setMaterial(container.getMaterial());
-                if(itemReward.getName() != null && !itemReward.getName().isEmpty()) builder.setName(itemReward.getName());
-                if(!container.getLore().isEmpty()) builder.addLore(container.getLore());
             }else if(reward instanceof FishingEntityReward entityReward){
                 builder.setMaterial(Material.getMaterial(entityReward.getEntityType().toString()+"_SPAWN_EGG"));
             }
@@ -105,6 +103,11 @@ public class GUIHandler implements Listener {
 
             if(reward instanceof FishingItemReward itemReward){
                 ItemStackContainer container = itemReward.getItemStackContainer();
+
+                if(itemReward.getName() != null && !itemReward.getName().isEmpty()) builder.setName(itemReward.getName());
+                if(!container.getLore().isEmpty()) builder.addLore(container.getLore());
+                if(container.isSkull() && container.hasSkullURL()) builder.setSkullURL(container.getSkullURL());
+
                 builder.addLore("&8Type: &fItem");
                 builder.addLore("&8Material: &f" + container.getMaterial());
                 builder.addLore("&8Amount: &f" + (container.getMinAmount() != container.getMaxAmount() ? container.getMinAmount() + "-" + container.getMaxAmount() : container.getMinAmount()));
@@ -117,6 +120,18 @@ public class GUIHandler implements Listener {
                 if(container.hasGuaranteedEnchantmentsAmount()) builder.addLore("&8Guaranteed Enchantments Amount: &f" + container.getGuaranteedEnchantmentsAmount());
                 if(container.hasBonusEnchantmentsAmount()) builder.addLore("&8Bonus Enchantments Amount: &f" + container.getBonusEnchantmentsAmount());
                 if(container.overrideBonusEnchantments()) builder.addLore("&8Override Bonus Enchantments: &f" + container.overrideBonusEnchantments());
+
+                if(container.isPotion()){
+                    if(container.hasEffects()) {
+                        builder.addLore("&8Potion Effects:");
+                        for (PotionEffect effect : container.getEffects()) {
+                            builder.addLore("&8- &f" + effect.getType().getTranslationKey().substring(18) + " Lv." + (effect.getAmplifier() + 1) + " " + (effect.getDuration() / 20) + "s");
+                        }
+                    }
+                    if(container.hasPotionColor()){
+                        builder.addLore("&8Potion Color: " + container.getPotionColor().getRed() + ", " + container.getPotionColor().getGreen() + ", " + container.getPotionColor().getBlue());
+                    }
+                }
             }
             if(reward instanceof FishingEntityReward entityReward){
                 builder.addLore("&8Type: &fEntity");
@@ -146,8 +161,10 @@ public class GUIHandler implements Listener {
             if(reward.isJunk()) builder.addLore("&8Junk: &ftrue");
 
 
-            if(reward.getName() != null && !reward.getName().isEmpty() )builder.addLore("&8Name: &f" + reward.getName());
+            if(reward.getName() != null && !reward.getName().isEmpty()) builder.addLore("&8Name: &f" + reward.getName());
             if(reward.getCatchMessage() != null && !reward.getCatchMessage().isEmpty()) builder.addLore("&8Catch Message: &f" + reward.getCatchMessage());
+            if(reward.hasRewardSound()) builder.addLore("&8Sound: " + reward.getRewardSound().getSound() + " V: " + reward.getRewardSound().getVolume() + " P: " + reward.getRewardSound().getPitch());
+
             if(!reward.getCommandsRan().isEmpty()){
                 builder.addLore("&8Commands:");
                 for(String command : reward.getCommandsRan()){

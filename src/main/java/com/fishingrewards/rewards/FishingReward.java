@@ -1,5 +1,6 @@
 package com.fishingrewards.rewards;
 
+import org.bukkit.Sound;
 import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class FishingReward implements Comparable<FishingReward> {
 	protected boolean[] weather = new boolean[3];
 	protected boolean treasure = false;
 	protected boolean junk = false;
+	protected RewardSound rewardSound;
 
 	public String getName(){
 		return name;
@@ -144,6 +146,18 @@ public class FishingReward implements Comparable<FishingReward> {
 
 	public void setJunk(){
 		this.junk = true;
+	}
+
+	public boolean hasRewardSound(){
+		return rewardSound != null;
+	}
+
+	public RewardSound getRewardSound(){
+		return rewardSound;
+	}
+
+	public void setRewardSound(RewardSound rewardSound){
+		this.rewardSound = rewardSound;
 	}
 
 	@Override

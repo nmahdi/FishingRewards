@@ -4,6 +4,7 @@ import com.fishingrewards.PluginLogger;
 import com.fishingrewards.rewards.RewardAttribute;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -12,10 +13,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.profile.PlayerProfile;
-import org.bukkit.profile.PlayerTextures;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
@@ -80,6 +84,13 @@ public class ItemStackBuilder {
                 addAttributeModifier(attribute.getAttribute(), container.getAttributes().get(attribute.getAttribute()));
             }
         }
+        if(container.isSkull() && container.hasSkullURL()){
+            setSkullURL(container.getSkullURL());
+        }
+        if(container.isPotion()){
+            if(container.hasEffects()) setPotionEffects(container.getEffects());
+            if(container.hasPotionColor()) setPotionColor(container.getPotionColor());
+        }
         return this;
     }
 
@@ -140,6 +151,32 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder addAttributeModifier(Attribute attribute, AttributeModifier modifier){
         meta.addAttributeModifier(attribute, modifier);
+        return this;
+    }
+
+    public ItemStackBuilder setSkullURL(String url){
+        SkullMeta skullMeta = (SkullMeta) meta;
+        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.fromString("105ca6b8-65d9-46ab-82aa-05e1fc902d67"), "fishing_reward");
+        try {
+            profile.getTextures().setSkin(new URL("https://textures.minecraft.net/texture/"+url));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        skullMeta.setOwnerProfile(profile);
+        return this;
+    }
+
+    public ItemStackBuilder setPotionEffects(ArrayList<PotionEffect> effects){
+        PotionMeta potionMeta = (PotionMeta) meta;
+        for(PotionEffect effect : effects){
+            potionMeta.addCustomEffect(effect, true);
+        }
+        return this;
+    }
+
+    public ItemStackBuilder setPotionColor(Color color){
+        PotionMeta potionMeta = (PotionMeta) meta;
+        potionMeta.setColor(color);
         return this;
     }
 

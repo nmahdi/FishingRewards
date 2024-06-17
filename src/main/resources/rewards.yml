@@ -9,6 +9,7 @@
 #   message:                        Specify a message that a player receives when a reward is reeled in.
 #   treasure:                       Specify if the reward chance is increased by Luck. True or False.
 #   junk:                           Specify if the reward chance is decreased by luck. True or false
+#   sound:                          Specify a sound that's played when a reward is reeled in. (id:volume:pitch)
 #
 ########################### Item Keywords ###########################
 #   material:                       Specify the type of item using Minecraft IDs. Example: 'LEATHER'
@@ -22,7 +23,7 @@
 #   override-bonus-enchantments:    Allows more guaranteed enchantments to be applied if no bonus enchantments were applied. True/False
 #   durability:                     Set the durability of the item as a percentage, either as a range (Min-Max) or an exact value.
 #   unbreakable:                    Makes the item unbreakable. True/False
-#   consumed:                       Specify if the item should be consumed upon pickup. True or False.
+#   consumed:                       Specify if the item should be consumed upon pickup. True/False.
 #   flags:                          Specify list of item flags to the reward
 #       - 'HIDE_ENCHANTS'
 #       - 'HIDE_ATTRIBUTES'
@@ -32,6 +33,7 @@
 #       - 'HIDE_POTION_EFFECTS'
 #       - 'HIDE_DYE'
 #       - 'HIDE_ARMOR_TRIM'
+#
 #   attributes:                     Specify the Minecraft attributes followed by a numerical value.
 #       health:                     generic.max_health
 #           value:                  Value of the attribute modifier
@@ -47,6 +49,13 @@
 #       luck:                       generic.luck
 #       absorption:                 generic.max_absorption
 #
+#   skull-url:                      Changes the texture of a skull item based on a profile url. Only works if the material is player_head
+#   skull-url: '2cdc81a313c58bef691ace59c733318bff37ac31909adc11325a4f563786ef82' - This value is my own skin's url
+#
+#   potion-effects:                 Adds potion effects to the item. Only works if the material is potion/splash_potion/lingering_potion
+#       - 'health_boost:1:30'       This adds the health boost effect at level 1 for 30 seconds. 'effect:level:time'
+#   potion-color: '255:255:255'     Sets the color of the potion to an RGB value.
+#
 ########################### Entity Keywords ###########################
 #   entity-type:                    Specify the Minecraft entity type. Example: 'ZOMBIE'
 #   attributes:                     Specify the Minecraft entity attributes followed by a numerical value.
@@ -60,7 +69,7 @@
 #       armor:                      generic.armor
 #       armor-toughness:            generic.armor_toughness
 #       luck:                       generic.luck
-#       absorption:                 generic.max_absorption
+#       absorption:                 generic.max_absorption (Isn't supported on spigot versions 1.20.1
 #       horse-jump:                 horse.jump_strength
 #       zombie-rienforcement:       zombie.spawn_rienforcements
 #   drops:                          Items that are dropped when the entity is killed.
@@ -119,6 +128,31 @@
 #   permission: 'example_drop'
 #   weather: 'thunder'
 #   treasure: true
+#   sound: 'entity_experience_orb_pickup:0.5:0.1'
+#
+########################### Skull Item Example ###########################
+# Money:
+#   type: 'item'
+#   chance: 100
+#   material: 'player_head'
+#   name: '&6MONEY'
+#   xp: '10'
+#   consumed: true
+#   commands:
+#       - 'eco add %player% 2500'
+#   skull-url: '9fd108383dfa5b02e86635609541520e4e158952d68c1c8f8f200ec7e88642d'
+#
+########################### Potion Example ###########################
+# GodPotion:
+#   type: 'item'
+#   chance: 100
+#   material: 'potion'
+#   name: '&4God Potion'
+#   potion-color: '127:0:255'
+#   potion-effects:
+#       - 'health_boost:5:600'
+#       - 'resistance:3:600'
+#       - 'fire_resistance:1:600'
 #
 ########################### Entity Example ###########################
 # Speedy-Zombie:

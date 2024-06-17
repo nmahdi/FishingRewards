@@ -1,5 +1,7 @@
-package com.fishingrewards;
+package com.fishingrewards.managers;
 
+import com.fishingrewards.FishingRewards;
+import com.fishingrewards.PluginLogger;
 import com.fishingrewards.rewards.RewardConfiguration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -256,11 +258,6 @@ public class ConfigManager {
 
     public RewardMode getRewardMode() {
         return rewardMode;
-    }
-
-    //For Debug Purposes
-    public void setRewardMode(RewardMode mode) {
-        this.rewardMode = mode;
     }
 
     public File getRewardsFile() {
