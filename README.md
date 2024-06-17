@@ -29,6 +29,8 @@ A Minecraft 1.20 Plugin using Spigot API to customize fishing rewards.
 - Model Data
 - Consumed on catch
 - Attribute Modifiers
+- Custom Player Heads
+- Potion Support
 ### Entities
 - Name
 - Attributes
